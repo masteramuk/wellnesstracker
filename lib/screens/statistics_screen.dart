@@ -183,13 +183,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     });
   }
 
+  // This method now also returns the original record to help with tooltip customization
   List<FlSpot> _getChartData(String type) {
     List<FlSpot> spots = [];
     final thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
-    final recentRecords = _healthData.where((record) => record.timestamp.isAfter(thirtyDaysAgo)).toList();
+    final recentRecordsFiltered = _healthData.where((record) => record.timestamp.isAfter(thirtyDaysAgo)).toList();
 
-    for (int i = 0; i < recentRecords.length; i++) {
-      final record = recentRecords[i];
+    for (int i = 0; i < recentRecordsFiltered.length; i++) {
+      final record = recentRecordsFiltered[i];
       double? value;
       switch (type) {
         case 'sugar':
@@ -206,11 +207,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           break;
       }
       if (value != null) {
+        // We're still using the index for x-axis, but we'll use recentRecords in the tooltip
         spots.add(FlSpot(i.toDouble(), value));
       }
     }
     return spots;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -226,50 +229,54 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       body: _healthData.isEmpty
           ? const Center(child: Text('No data yet.', style: TextStyle(color: Colors.white)))
           : ListView(
-                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 80.0),
-                children: [
-                  _buildOverallAnalyticsCard(),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(child: _buildTotalRecordsCard()),
-                      const SizedBox(width: 16),
-                      Expanded(child: _buildTopExercisesCard()),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(child: _buildStepsCard()),
-                      const SizedBox(width: 16),
-                      Expanded(child: _buildCaloriesCard()),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildStatisticCard(
-                    'Blood Pressure',
-                    'mmHg',
-                    [
-                      LineChartBarData(spots: _getChartData('systolic'), isCurved: true, barWidth: 3, color: Colors.green[50]!),
-                      LineChartBarData(spots: _getChartData('diastolic'), isCurved: true, barWidth: 3, color: Colors.green),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildStatisticCard(
-                    'Sugar (mmol/L)',
-                    'mmol/L',
-                    [LineChartBarData(spots: _getChartData('sugar'), isCurved: true, barWidth: 3, color: Colors.orange[900]!)],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildStatisticCard(
-                    'Pulse Rate',
-                    'bpm',
-                    [LineChartBarData(spots: _getChartData('heartRate'), isCurved: true, barWidth: 3, color: Colors.red[900]!)],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildLast7RecordsTable(),
-                ],
-              ),
+        padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 80.0),
+        children: [
+          _buildOverallAnalyticsCard(),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(child: _buildTotalRecordsCard()),
+              const SizedBox(width: 16),
+              Expanded(child: _buildTopExercisesCard()),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(child: _buildStepsCard()),
+              const SizedBox(width: 16),
+              Expanded(child: _buildCaloriesCard()),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // Modified _buildStatisticCard calls
+          _buildStatisticCard(
+            'Blood Pressure',
+            'mmHg',
+            [
+              LineChartBarData(spots: _getChartData('systolic'), isCurved: true, barWidth: 3, color: Colors.green[50]!),
+              LineChartBarData(spots: _getChartData('diastolic'), isCurved: true, barWidth: 3, color: Colors.green),
+            ],
+            chartType: 'bloodPressure', // New parameter to identify chart type
+          ),
+          const SizedBox(height: 16),
+          _buildStatisticCard(
+            'Sugar (mmol/L)',
+            'mmol/L',
+            [LineChartBarData(spots: _getChartData('sugar'), isCurved: true, barWidth: 3, color: Colors.orange[900]!)],
+            chartType: 'sugar', // New parameter
+          ),
+          const SizedBox(height: 16),
+          _buildStatisticCard(
+            'Pulse Rate',
+            'bpm',
+            [LineChartBarData(spots: _getChartData('heartRate'), isCurved: true, barWidth: 3, color: Colors.red[900]!)],
+            chartType: 'heartRate', // New parameter
+          ),
+          const SizedBox(height: 16),
+          _buildLast7RecordsTable(),
+        ],
+      ),
     );
   }
 
@@ -305,6 +312,33 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       children: [
         Icon(icon, color: Colors.yellow),
         const SizedBox(width: 16),
+        // >>> Wrap the Column with Expanded <<<
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(color: Colors.white70),
+                //overflow: TextOverflow.ellipsis, // Add ellipsis for long labels
+              ),
+              Text(
+                value,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                //overflow: TextOverflow.ellipsis, // Add ellipsis for long values
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  /*Widget _buildAnalyticsRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.yellow),
+        const SizedBox(width: 16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -314,9 +348,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         )
       ],
     );
-  }
+  }*/
 
-  Widget _buildStatisticCard(String title, String unit, List<LineChartBarData> lineBarsData) {
+  Widget _buildStatisticCard(String title, String unit, List<LineChartBarData> lineBarsData, {required String chartType}) {
     return Card(
       color: Colors.grey[850],
       child: Padding(
@@ -334,6 +368,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   titlesData: FlTitlesData(
                     leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40)),
                     bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (value, meta) {
+                      if (value.toInt() < 0 || value.toInt() >= recentRecords.length) {
+                        return const Text(''); // Handle out-of-bounds index
+                      }
                       final record = recentRecords[value.toInt()];
                       return Text(DateFormat.Md().format(record.timestamp), style: const TextStyle(color: Colors.white, fontSize: 10));
                     })),
@@ -341,6 +378,70 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   ),
                   gridData: const FlGridData(show: true),
+                  // >>> THIS IS THE IMPORTANT PART FOR TOOLTIPS <<<
+                  lineTouchData: LineTouchData(
+                    enabled: true, // Make sure touch is enabled
+                    touchTooltipData: LineTouchTooltipData(
+
+                      tooltipRoundedRadius: 8.0, // Rounded corners for the tooltip box
+                      tooltipPadding: const EdgeInsets.all(8), // Padding inside the tooltip box
+                      fitInsideHorizontally: true, // Try to keep tooltip within horizontal bounds
+                      fitInsideVertically: true, // Try to keep tooltip within vertical bounds
+
+                      getTooltipItems: (List<LineBarSpot> touchedSpots) {
+                        return touchedSpots.map((LineBarSpot touchedSpot) {
+                          // Get the original HealthRecord based on the touched x-value (index)
+                          final int recordIndex = touchedSpot.x.toInt();
+                          if (recordIndex < 0 || recordIndex >= recentRecords.length) {
+                            return null; // Return null to hide tooltip for invalid spots
+                          }
+                          final HealthRecord record = recentRecords[recordIndex];
+
+                          String tooltipText = '';
+                          String valueText = '';
+                          TextStyle textStyle = const TextStyle(color: Colors.white, fontWeight: FontWeight.bold);
+
+                          switch (chartType) {
+                            case 'bloodPressure':
+                              if (touchedSpot.barIndex == 0) { // Systolic line
+                                valueText = record.systolic != null ? record.systolic!.toStringAsFixed(0) : 'N/A';
+                                tooltipText = 'Systolic: $valueText';// $unit';
+                                textStyle = TextStyle(color: Colors.green[50]!, fontWeight: FontWeight.bold);
+                              } else if (touchedSpot.barIndex == 1) { // Diastolic line
+                                valueText = record.diastolic != null ? record.diastolic!.toStringAsFixed(0) : 'N/A';
+                                tooltipText = 'Diastolic: $valueText'; // $unit';
+                                textStyle = TextStyle(color: Colors.green, fontWeight: FontWeight.bold);
+                              }
+                              break;
+                            case 'sugar':
+                              valueText = record.sugar != null ? (record.sugar! / 18).toStringAsFixed(1) : 'N/A';
+                              tooltipText = '$valueText $unit'; //'Sugar: $valueText $unit';
+                              textStyle = TextStyle(color: Colors.orange[900]!, fontWeight: FontWeight.bold);
+                              break;
+                            case 'heartRate':
+                              valueText = record.heartRate != null ? record.heartRate!.toStringAsFixed(0) : 'N/A';
+                              tooltipText = '$valueText $unit'; //'Pulse: $valueText $unit';
+                              textStyle = TextStyle(color: Colors.red[900]!, fontWeight: FontWeight.bold);
+                              break;
+                            default:
+                              valueText = touchedSpot.y.toStringAsFixed(1);
+                              tooltipText = 'Value: $valueText $unit';
+                              break;
+                          }
+
+                          return LineTooltipItem(
+                            tooltipText,
+                            TextStyle(
+                              color: Colors.white, // Use the determined color
+                              fontWeight: FontWeight.bold,
+                              // If you want a background behind each text item, you'd do:
+                              //background: Paint()..color = Colors.black.withValues(alpha:0.95), // This paints behind the text
+                            ),
+                          );
+                        }).whereType<LineTooltipItem>().toList(); // Filter out any nulls
+                      },
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -364,7 +465,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final last7Records = _healthData.length > 7 ? _healthData.sublist(_healthData.length - 7) : _healthData;
     last7Records.sort((a, b) => b.timestamp.compareTo(a.timestamp));
     return Card(
-      color: const Color(0xFFBB4101),
+      color: const Color(0xFF973502),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -390,14 +491,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   rows: last7Records.map((record) {
                     return DataRow(cells: [
                       DataCell(Text(DateFormat.yMd().add_jm().format(record.timestamp), style: const TextStyle(color: Colors.white))),
-                      DataCell(Text('${record.systolic}/${record.diastolic}', style: const TextStyle(color: Colors.white))),
-                      DataCell(Text((record.sugar! / 18).toStringAsFixed(1), style: const TextStyle(color: Colors.white))),
-                      DataCell(Text(record.heartRate.toString(), style: const TextStyle(color: Colors.white))),
+                      DataCell(Text('${record.systolic ?? 'N/A'}/${record.diastolic ?? 'N/A'}', style: const TextStyle(color: Colors.white))),
+                      DataCell(Text((record.sugar != null ? (record.sugar! / 18).toStringAsFixed(1) : 'N/A'), style: const TextStyle(color: Colors.white))),
+                      DataCell(Text(record.heartRate?.toString() ?? 'N/A', style: const TextStyle(color: Colors.white))),
                       DataCell(Text(record.totalCalories.toString(), style: const TextStyle(color: Colors.white))),
-                      DataCell(Text(record.exerciseCalories.toString(), style: const TextStyle(color: Colors.white))),
-                      DataCell(Text(record.steps.toString(), style: const TextStyle(color: Colors.white))),
-                      DataCell(Text(record.mentalHealth ?? '')),
-                      DataCell(Text(record.spiritualHealth ?? '')),
+                      DataCell(Text(record.exerciseCalories?.toString() ?? 'N/A', style: const TextStyle(color: Colors.white))),
+                      DataCell(Text(record.steps?.toString() ?? 'N/A', style: const TextStyle(color: Colors.white))),
+                      DataCell(Text(record.mentalHealth ?? 'N/A', style: const TextStyle(color: Colors.white))),
+                      DataCell(Text(record.spiritualHealth ?? 'N/A', style: const TextStyle(color: Colors.white))),
                     ]);
                   }).toList(),
                 ),
@@ -422,7 +523,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             Center(
               child: Text(
                 _healthData.length.toString(),
-                style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white),
+                style: const TextStyle(fontSize: 95, fontFamily: 'BoucherieBlock', fontWeight: FontWeight.bold, color: Colors.yellow),
               ),
             ),
           ],
