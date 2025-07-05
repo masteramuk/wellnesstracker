@@ -1,0 +1,156 @@
+[
+  {
+    "timestamp": "2025-06-26T10:00:00.000Z",
+    "systolic": 120.0,
+    "diastolic": 80.0,
+    "sugar": 100.0,
+    "heartRate": 70.0,
+    "mealTime": "Before Breakfast",
+    "foodAndDrinks": [
+      {"name": "Coffee", "calories": 5}
+    ],
+    "steps": 1500,
+    "exerciseType": "Walking",
+    "exerciseCalories": 100,
+    "mentalHealth": "😊",
+    "spiritualHealth": "🙏"
+  },
+  {
+    "timestamp": "2025-06-27T10:00:00.000Z",
+    "systolic": 125.0,
+    "diastolic": 85.0,
+    "sugar": 110.0,
+    "heartRate": 75.0,
+    "mealTime": "After Breakfast",
+    "foodAndDrinks": [
+      {"name": "Oatmeal", "calories": 150},
+      {"name": "Orange Juice", "calories": 110}
+    ],
+    "steps": 2500,
+    "exerciseType": "Running",
+    "exerciseCalories": 200,
+    "mentalHealth": "😐",
+    "spiritualHealth": "🧘"
+  },
+  {
+    "timestamp": "2025-06-28T10:00:00.000Z",
+    "systolic": 130.0,
+    "diastolic": 90.0,
+    "sugar": 120.0,
+    "heartRate": 80.0,
+    "mealTime": "Before Lunch",
+    "foodAndDrinks": [],
+    "steps": 3500,
+    "exerciseType": "Cycling",
+    "exerciseCalories": 300,
+    "mentalHealth": "😔",
+    "spiritualHealth": "💖"
+  },
+  {
+    "timestamp": "2025-06-29T10:00:00.000Z",
+    "systolic": 115.0,
+    "diastolic": 75.0,
+    "sugar": 90.0,
+    "heartRate": 65.0,
+    "mealTime": "After Lunch",
+    "foodAndDrinks": [
+      {"name": "Salad", "calories": 200},
+      {"name": "Water", "calories": 0}
+    ],
+    "steps": 4500,
+    "exerciseType": "Swimming",
+    "exerciseCalories": 400,
+    "mentalHealth": "😊",
+    "spiritualHealth": "🙏"
+  },
+  {
+    "timestamp": "2025-06-30T10:00:00.000Z",
+    "systolic": 110.0,
+    "diastolic": 70.0,
+    "sugar": 80.0,
+    "heartRate": 60.0,
+    "mealTime": "Before Dinner",
+    "foodAndDrinks": [],
+    "steps": 5500,
+    "exerciseType": "Weightlifting",
+    "exerciseCalories": 500,
+    "mentalHealth": "😐",
+    "spiritualHealth": "🧘"
+  },
+  {
+    "timestamp": "2025-07-01T10:00:00.000Z",
+    "systolic": 135.0,
+    "diastolic": 95.0,
+    "sugar": 130.0,
+    "heartRate": 85.0,
+    "mealTime": "After Dinner",
+    "foodAndDrinks": [
+      {"name": "Steak", "calories": 500},
+      {"name": "Wine", "calories": 125}
+    ],
+    "steps": 6500,
+    "exerciseType": "Yoga",
+    "exerciseCalories": 150,
+    "mentalHealth": "😔",
+    "spiritualHealth": "💖"
+  },
+  {
+    "timestamp": "2025-07-02T10:00:00.000Z",
+    "systolic": 140.0,
+    "diastolic": 100.0,
+    "sugar": 140.0,
+    "heartRate": 90.0,
+    "mealTime": "Fasting",
+    "foodAndDrinks": [],
+    "steps": 7500,
+    "exerciseType": "Pilates",
+    "exerciseCalories": 250,
+    "mentalHealth": "😊",
+    "spiritualHealth": "🙏"
+  },
+  {
+    "timestamp": "2025-07-03T10:00:00.000Z",
+    "systolic": 105.0,
+    "diastolic": 65.0,
+    "sugar": 70.0,
+    "heartRate": 55.0,
+    "mealTime": "Before Breakfast",
+    "foodAndDrinks": [],
+    "steps": 8500,
+    "exerciseType": "Hiking",
+    "exerciseCalories": 600,
+    "mentalHealth": "😐",
+    "spiritualHealth": "🧘"
+  },
+  {
+    "timestamp": "2025-07-04T10:00:00.000Z",
+    "systolic": 100.0,
+    "diastolic": 60.0,
+    "sugar": 60.0,
+    "heartRate": 50.0,
+    "mealTime": "After Breakfast",
+    "foodAndDrinks": [
+      {"name": "Eggs", "calories": 155},
+      {"name": "Toast", "calories": 75}
+    ],
+    "steps": 9500,
+    "exerciseType": "Dancing",
+    "exerciseCalories": 350,
+    "mentalHealth": "😔",
+    "spiritualHealth": "💖"
+  },
+  {
+    "timestamp": "2025-07-05T10:00:00.000Z",
+    "systolic": 145.0,
+    "diastolic": 105.0,
+    "sugar": 150.0,
+    "heartRate": 95.0,
+    "mealTime": "Before Lunch",
+    "foodAndDrinks": [],
+    "steps": 10500,
+    "exerciseType": "Other",
+    "exerciseCalories": 450,
+    "mentalHealth": "😊",
+    "spiritualHealth": "🙏"
+  }
+]
