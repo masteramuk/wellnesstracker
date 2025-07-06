@@ -228,54 +228,75 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       ),
       body: _healthData.isEmpty
           ? const Center(child: Text('No data yet.', style: TextStyle(color: Colors.white)))
-          : ListView(
-        padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 80.0),
-        children: [
-          _buildOverallAnalyticsCard(),
-          const SizedBox(height: 16),
-          Row(
+          : LayoutBuilder(
+        builder: (context, constraints) {
+          final isTablet = constraints.maxWidth > 600;
+          return ListView(
+            padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 80.0),
             children: [
-              Expanded(child: _buildTotalRecordsCard()),
-              const SizedBox(width: 16),
-              Expanded(child: _buildTopExercisesCard()),
+              _buildOverallAnalyticsCard(),
+              const SizedBox(height: 16),
+              isTablet
+                  ? Row(
+                children: [
+                  Expanded(child: _buildTotalRecordsCard(isTablet)),
+                  const SizedBox(width: 16),
+                  Expanded(child: _buildTopExercisesCard()),
+                ],
+              )
+                  : Column(
+                children: [
+                  _buildTotalRecordsCard(isTablet),
+                  const SizedBox(height: 16),
+                  _buildTopExercisesCard(),
+                ],
+              ),
+              const SizedBox(height: 16),
+              isTablet
+                  ? Row(
+                children: [
+                  Expanded(child: _buildStepsCard()),
+                  const SizedBox(width: 16),
+                  Expanded(child: _buildCaloriesCard()),
+                ],
+              )
+                  : Column(
+                children: [
+                  _buildStepsCard(),
+                  const SizedBox(height: 16),
+                  _buildCaloriesCard(),
+                ],
+              ),
+              const SizedBox(height: 16),
+              // Modified _buildStatisticCard calls
+              _buildStatisticCard(
+                'Blood Pressure',
+                'mmHg',
+                [
+                  LineChartBarData(spots: _getChartData('systolic'), isCurved: true, barWidth: 3, color: Colors.green[50]!),
+                  LineChartBarData(spots: _getChartData('diastolic'), isCurved: true, barWidth: 3, color: Colors.green),
+                ],
+                chartType: 'bloodPressure', // New parameter to identify chart type
+              ),
+              const SizedBox(height: 16),
+              _buildStatisticCard(
+                'Sugar (mmol/L)',
+                'mmol/L',
+                [LineChartBarData(spots: _getChartData('sugar'), isCurved: true, barWidth: 3, color: Colors.orange[900]!)],
+                chartType: 'sugar', // New parameter
+              ),
+              const SizedBox(height: 16),
+              _buildStatisticCard(
+                'Pulse Rate',
+                'bpm',
+                [LineChartBarData(spots: _getChartData('heartRate'), isCurved: true, barWidth: 3, color: Colors.red[900]!)],
+                chartType: 'heartRate', // New parameter
+              ),
+              const SizedBox(height: 16),
+              _buildLast7RecordsTable(isTablet),
             ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(child: _buildStepsCard()),
-              const SizedBox(width: 16),
-              Expanded(child: _buildCaloriesCard()),
-            ],
-          ),
-          const SizedBox(height: 16),
-          // Modified _buildStatisticCard calls
-          _buildStatisticCard(
-            'Blood Pressure',
-            'mmHg',
-            [
-              LineChartBarData(spots: _getChartData('systolic'), isCurved: true, barWidth: 3, color: Colors.green[50]!),
-              LineChartBarData(spots: _getChartData('diastolic'), isCurved: true, barWidth: 3, color: Colors.green),
-            ],
-            chartType: 'bloodPressure', // New parameter to identify chart type
-          ),
-          const SizedBox(height: 16),
-          _buildStatisticCard(
-            'Sugar (mmol/L)',
-            'mmol/L',
-            [LineChartBarData(spots: _getChartData('sugar'), isCurved: true, barWidth: 3, color: Colors.orange[900]!)],
-            chartType: 'sugar', // New parameter
-          ),
-          const SizedBox(height: 16),
-          _buildStatisticCard(
-            'Pulse Rate',
-            'bpm',
-            [LineChartBarData(spots: _getChartData('heartRate'), isCurved: true, barWidth: 3, color: Colors.red[900]!)],
-            chartType: 'heartRate', // New parameter
-          ),
-          const SizedBox(height: 16),
-          _buildLast7RecordsTable(),
-        ],
+          );
+        },
       ),
     );
   }
@@ -461,7 +482,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }*/
 
-  Widget _buildLast7RecordsTable() {
+  Widget _buildLast7RecordsTable(bool isTablet) {
     final last7Records = _healthData.length > 7 ? _healthData.sublist(_healthData.length - 7) : _healthData;
     last7Records.sort((a, b) => b.timestamp.compareTo(a.timestamp));
     return Card(
@@ -477,28 +498,43 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: DataTable(
-                  columns: const [
-                    DataColumn(label: Text('Date', style: TextStyle(color: Colors.white))),
-                    DataColumn(label: Text('BP', style: TextStyle(color: Colors.white))),
-                    DataColumn(label: Text('Sugar', style: TextStyle(color: Colors.white))),
-                    DataColumn(label: Text('Pulse Rate', style: TextStyle(color: Colors.white))),
-                    DataColumn(label: Text('Cal In', style: TextStyle(color: Colors.white))),
-                    DataColumn(label: Text('Cal Out', style: TextStyle(color: Colors.white))),
-                    DataColumn(label: Text('Steps', style: TextStyle(color: Colors.white))),
-                    DataColumn(label: Text('Mental', style: TextStyle(color: Colors.white))),
-                    DataColumn(label: Text('Spiritual', style: TextStyle(color: Colors.white))),
+                  headingRowColor: WidgetStateColor.resolveWith((states) => Colors.black),
+                  // *** ADD THIS LINE ***
+                  dataRowColor: WidgetStateColor.resolveWith((states) => Colors.grey[850]!), // Or any other color for non-date cells
+                  columns: [
+                    // *** REMOVE backgroundColor from Text in DataColumn ***
+                    const DataColumn(label: Text('Date', style: TextStyle(color: Colors.white))),
+                    const DataColumn(label: Text('BP', style: TextStyle(color: Colors.white))),
+                    const DataColumn(label: Text('Sugar', style: TextStyle(color: Colors.white))),
+                    const DataColumn(label: Text('Pulse Rate', style: TextStyle(color: Colors.white))),
+                    if (isTablet) const DataColumn(label: Text('Cal In', style: TextStyle(color: Colors.white))),
+                    if (isTablet) const DataColumn(label: Text('Cal Out', style: TextStyle(color: Colors.white))),
+                    const DataColumn(label: Text('Steps', style: TextStyle(color: Colors.white))),
+                    if (isTablet) const DataColumn(label: Text('Mental', style: TextStyle(color: Colors.white))),
+                    if (isTablet) const DataColumn(label: Text('Spiritual', style: TextStyle(color: Colors.white))),
                   ],
                   rows: last7Records.map((record) {
                     return DataRow(cells: [
-                      DataCell(Text(DateFormat.yMd().add_jm().format(record.timestamp), style: const TextStyle(color: Colors.white))),
+                      // *** MODIFY THIS DataCell ***
+                      DataCell(
+                        Container(
+                          color: Colors.black, // This will fill the cell
+                          alignment: Alignment.center, // Center the text within the Container
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0), // Optional: Add some padding
+                          child: Text(
+                            isTablet ? DateFormat.yMd().add_jm().format(record.timestamp) : DateFormat('yMd a').format(record.timestamp),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
                       DataCell(Text('${record.systolic ?? 'N/A'}/${record.diastolic ?? 'N/A'}', style: const TextStyle(color: Colors.white))),
                       DataCell(Text((record.sugar != null ? (record.sugar! / 18).toStringAsFixed(1) : 'N/A'), style: const TextStyle(color: Colors.white))),
                       DataCell(Text(record.heartRate?.toString() ?? 'N/A', style: const TextStyle(color: Colors.white))),
-                      DataCell(Text(record.totalCalories.toString(), style: const TextStyle(color: Colors.white))),
-                      DataCell(Text(record.exerciseCalories?.toString() ?? 'N/A', style: const TextStyle(color: Colors.white))),
+                      if (isTablet) DataCell(Text(record.totalCalories.toString(), style: const TextStyle(color: Colors.white))),
+                      if (isTablet) DataCell(Text(record.exerciseCalories?.toString() ?? 'N/A', style: const TextStyle(color: Colors.white))),
                       DataCell(Text(record.steps?.toString() ?? 'N/A', style: const TextStyle(color: Colors.white))),
-                      DataCell(Text(record.mentalHealth ?? 'N/A', style: const TextStyle(color: Colors.white))),
-                      DataCell(Text(record.spiritualHealth ?? 'N/A', style: const TextStyle(color: Colors.white))),
+                      if (isTablet) DataCell(Text(record.mentalHealth ?? 'N/A', style: const TextStyle(color: Colors.white))),
+                      if (isTablet) DataCell(Text(record.spiritualHealth ?? 'N/A', style: const TextStyle(color: Colors.white))),
                     ]);
                   }).toList(),
                 ),
@@ -510,7 +546,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildTotalRecordsCard() {
+  Widget _buildTotalRecordsCard(bool isTablet) {
     return Card(
       color: Colors.teal[800],
       child: Padding(
@@ -523,7 +559,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             Center(
               child: Text(
                 _healthData.length.toString(),
-                style: const TextStyle(fontSize: 95, fontFamily: 'BoucherieBlock', fontWeight: FontWeight.bold, color: Colors.yellow),
+                style: TextStyle(fontSize: isTablet ? 95 : 40, fontFamily: 'BoucherieBlock', fontWeight: FontWeight.bold, color: Colors.yellow),
               ),
             ),
           ],
