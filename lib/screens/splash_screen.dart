@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:healthtracker/models/health_record.dart';
+import 'package:healthtracker/models/health_record.dart' show HealthRecord;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'main_screen.dart';
 
