@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'screens/splash_screen.dart';
+import 'package:healthtracker/screens/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         cardTheme: CardThemeData(
           elevation: 4,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withAlpha(26),
         ),
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: Colors.black.withOpacity(0.5),
+          backgroundColor: Colors.black.withAlpha(128),
           selectedItemColor: Colors.teal[300],
           unselectedItemColor: Colors.grey[400],
         ),

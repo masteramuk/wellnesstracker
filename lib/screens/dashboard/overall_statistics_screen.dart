@@ -2,21 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 
-import '../models/health_record.dart';
+import '../../models/health_record.dart';
 
-class StatisticsScreen extends StatefulWidget {
+class OverallStatisticsScreen extends StatefulWidget {
   final List<HealthRecord> records;
-  const StatisticsScreen({super.key, required this.records});
+  const OverallStatisticsScreen({super.key, required this.records});
 
   @override
-  State<StatisticsScreen> createState() => _StatisticsScreenState();
+  State<OverallStatisticsScreen> createState() => _OverallStatisticsScreenState();
 }
 
-class _StatisticsScreenState extends State<StatisticsScreen> {
+class _OverallStatisticsScreenState extends State<OverallStatisticsScreen> {
   List<HealthRecord> _healthData = [];
   Map<String, double> _averages = {};
-  Map<String, double> _mins = {};
-  Map<String, double> _maxs = {};
   HealthRecord? _bestRecord;
   int _stepsToday = 0;
   int _stepsLastWeek = 0;
@@ -163,22 +161,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         'heartRate': heartRateCount > 0 ? totalHeartRate / heartRateCount : 0,
         'calories': caloriesCount > 0 ? totalCalories / caloriesCount : 0,
         'steps': stepsCount > 0 ? totalSteps / stepsCount : 0,
-      };
-      _mins = {
-        'sugar': sugarCount > 0 ? minSugar : double.infinity,
-        'systolic': bpCount > 0 ? minSystolic : double.infinity,
-        'diastolic': bpCount > 0 ? minDiastolic : double.infinity,
-        'heartRate': heartRateCount > 0 ? minHeartRate : double.infinity,
-        'calories': caloriesCount > 0 ? minCalories.toDouble() : double.infinity,
-        'steps': stepsCount > 0 ? minSteps.toDouble() : double.infinity,
-      };
-      _maxs = {
-        'sugar': sugarCount > 0 ? maxSugar : 0,
-        'systolic': bpCount > 0 ? maxSystolic : 0,
-        'diastolic': bpCount > 0 ? maxDiastolic : 0,
-        'heartRate': heartRateCount > 0 ? maxHeartRate : 0,
-        'calories': caloriesCount > 0 ? maxCalories.toDouble() : 0,
-        'steps': stepsCount > 0 ? maxSteps.toDouble() : 0,
       };
     });
   }
@@ -436,12 +418,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               break;
                             case 'sugar':
                               valueText = record.sugar != null ? (record.sugar! / 18).toStringAsFixed(1) : 'N/A';
-                              tooltipText = '$valueText $unit'; //'Sugar: $valueText $unit';
+                              tooltipText = '$valueText $unit';//'Sugar: $valueText $unit';
                               textStyle = TextStyle(color: Colors.orange[900]!, fontWeight: FontWeight.bold);
                               break;
                             case 'heartRate':
                               valueText = record.heartRate != null ? record.heartRate!.toStringAsFixed(0) : 'N/A';
-                              tooltipText = '$valueText $unit'; //'Pulse: $valueText $unit';
+                              tooltipText = '$valueText $unit';//'Pulse: $valueText $unit';
                               textStyle = TextStyle(color: Colors.red[900]!, fontWeight: FontWeight.bold);
                               break;
                             default:
@@ -452,12 +434,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
                           return LineTooltipItem(
                             tooltipText,
-                            TextStyle(
-                              color: Colors.white, // Use the determined color
-                              fontWeight: FontWeight.bold,
-                              // If you want a background behind each text item, you'd do:
-                              //background: Paint()..color = Colors.black.withValues(alpha:0.95), // This paints behind the text
-                            ),
+                            textStyle,
                           );
                         }).whereType<LineTooltipItem>().toList(); // Filter out any nulls
                       },

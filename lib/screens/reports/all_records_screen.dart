@@ -13,7 +13,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart'; // Contains PdfGoogleFonts
 
-import '../models/health_record.dart';
+import '../../models/health_record.dart';
 
 class AllRecordsScreen extends StatefulWidget {
   final List<HealthRecord> records;
@@ -547,86 +547,86 @@ class _AllRecordsScreenState extends State<AllRecordsScreen> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isTablet = constraints.maxWidth > 600;
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: const InputDecoration(labelText: 'Search...', prefixIcon: Icon(Icons.search, color: Colors.white70)),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      DropdownButton<String>(
+                        value: _searchColumn,
+                        dropdownColor: Colors.black,
                         style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(labelText: 'Search...', prefixIcon: Icon(Icons.search, color: Colors.white70)),
+                        items: _searchableColumns.map((String value) {
+                          return DropdownMenuItem<String>(value: value, child: Text(value, style: const TextStyle(color: Colors.white)));
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _searchColumn = newValue!;
+                            _filterRecords();
+                          });
+                        },
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    DropdownButton<String>(
-                      value: _searchColumn,
-                      dropdownColor: Colors.black,
-                      style: const TextStyle(color: Colors.white),
-                      items: _searchableColumns.map((String value) {
-                        return DropdownMenuItem<String>(value: value, child: Text(value, style: const TextStyle(color: Colors.white)));
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _searchColumn = newValue!;
-                          _filterRecords();
-                        });
-                      },
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                child: Wrap(
-                  alignment: WrapAlignment.spaceAround,
-                  spacing: 12.0,
-                  runSpacing: 12.0,
-                  children: [
-                    _buildSummaryCard(
-                      'Avg BP',
-                      '${summary['avgSystolic']?.toStringAsFixed(1) ?? '-'}/${summary['avgDiastolic']?.toStringAsFixed(1) ?? '-'}',
-                      Icons.favorite_rounded,
-                      _getHealthColor('BP', summary['avgSystolic'] ?? 0, value2: summary['avgDiastolic']),
-                    ),
-                    _buildSummaryCard(
-                      'Avg Sugar',
-                      summary['avgSugar']?.toStringAsFixed(1) ?? '-',
-                      Icons.bloodtype,
-                      _getHealthColor('Sugar', summary['avgSugar'] ?? 0),
-                    ),
-                    _buildSummaryCard(
-                      'Avg PR',
-                      summary['avgHr']?.toStringAsFixed(1) ?? '-',
-                      Icons.speed,
-                      _getHealthColor('PR', summary['avgHr'] ?? 0),
-                    ),
-                    _buildSummaryCard(
-                      'Avg Cal In',
-                      summary['avgCalories']?.toStringAsFixed(1) ?? '-',
-                      Icons.restaurant,
-                      _getHealthColor('Calories In', summary['avgCalories'] ?? 0),
-                    ),
-                    _buildSummaryCard(
-                      'Avg Steps',
-                      summary['avgSteps']?.toStringAsFixed(0) ?? '-',
-                      Icons.directions_walk,
-                      _getHealthColor('Steps', summary['avgSteps'] ?? 0),
-                    ),
-                    if(isTablet)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                  child: Wrap(
+                    alignment: WrapAlignment.spaceAround,
+                    spacing: 12.0,
+                    runSpacing: 12.0,
+                    children: [
                       _buildSummaryCard(
-                        'Avg Cal Out',
-                        summary['avgExerciseCalories']?.toStringAsFixed(1) ?? '-',
-                        Icons.local_fire_department,
-                        _getHealthColor('Calories Out', summary['avgExerciseCalories'] ?? 0),
+                        'Avg BP',
+                        '${summary['avgSystolic']?.toStringAsFixed(1) ?? '-'}/${summary['avgDiastolic']?.toStringAsFixed(1) ?? '-'}',
+                        Icons.favorite_rounded,
+                        _getHealthColor('BP', summary['avgSystolic'] ?? 0, value2: summary['avgDiastolic']),
                       ),
-                  ],
+                      _buildSummaryCard(
+                        'Avg Sugar',
+                        summary['avgSugar']?.toStringAsFixed(1) ?? '-',
+                        Icons.bloodtype,
+                        _getHealthColor('Sugar', summary['avgSugar'] ?? 0),
+                      ),
+                      _buildSummaryCard(
+                        'Avg PR',
+                        summary['avgHr']?.toStringAsFixed(1) ?? '-',
+                        Icons.speed,
+                        _getHealthColor('PR', summary['avgHr'] ?? 0),
+                      ),
+                      _buildSummaryCard(
+                        'Avg Cal In',
+                        summary['avgCalories']?.toStringAsFixed(1) ?? '-',
+                        Icons.restaurant,
+                        _getHealthColor('Calories In', summary['avgCalories'] ?? 0),
+                      ),
+                      _buildSummaryCard(
+                        'Avg Steps',
+                        summary['avgSteps']?.toStringAsFixed(0) ?? '-',
+                        Icons.directions_walk,
+                        _getHealthColor('Steps', summary['avgSteps'] ?? 0),
+                      ),
+                      if(isTablet)
+                        _buildSummaryCard(
+                          'Avg Cal Out',
+                          summary['avgExerciseCalories']?.toStringAsFixed(1) ?? '-',
+                          Icons.local_fire_department,
+                          _getHealthColor('Calories Out', summary['avgExerciseCalories'] ?? 0),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
+                SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
@@ -674,49 +674,51 @@ class _AllRecordsScreenState extends State<AllRecordsScreen> {
                     ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 20.0, top: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.first_page, color: Colors.white),
-                      onPressed: _currentPage == 0 ? null : () => setState(() => _currentPage = 0),
-                      color: Colors.white,
-                    ),
-                    IconButton(
-                        icon: const Icon(Icons.chevron_left, color: Colors.white),
-                        onPressed: _currentPage == 0 ? null : () => setState(() => _currentPage--)),
-                    Text(
-                      'Page ${_currentPage + 1} of $totalPages',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    IconButton(
-                        icon: const Icon(Icons.chevron_right, color: Colors.white),
-                        onPressed: _currentPage >= totalPages - 1 ? null : () => setState(() => _currentPage++)),
-                    IconButton(
-                        icon: const Icon(Icons.last_page, color: Colors.white),
-                        onPressed: _currentPage >= totalPages - 1 ? null : () => setState(() => _currentPage = totalPages - 1)),
-                    const SizedBox(width: 20),
-                    DropdownButton<int>(
-                      value: _rowsPerPage,
-                      dropdownColor: Colors.black,
-                      style: const TextStyle(color: Colors.white),
-                      items: _rowsPerPageOptions.map((int value) {
-                        return DropdownMenuItem<int>(value: value, child: Text('$value rows', style: const TextStyle(color: Colors.white)));
-                      }).toList(),
-                      onChanged: (int? newValue) {
-                        setState(() {
-                          _rowsPerPage = newValue!;
-                          _currentPage = 0;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              )
-            ],
+                Padding(
+                  padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 20.0, top: 8.0),
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.first_page, color: Colors.white),
+                        onPressed: _currentPage == 0 ? null : () => setState(() => _currentPage = 0),
+                        color: Colors.white,
+                      ),
+                      IconButton(
+                          icon: const Icon(Icons.chevron_left, color: Colors.white),
+                          onPressed: _currentPage == 0 ? null : () => setState(() => _currentPage--)),
+                      Text(
+                        'Page ${_currentPage + 1} of $totalPages',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      IconButton(
+                          icon: const Icon(Icons.chevron_right, color: Colors.white),
+                          onPressed: _currentPage >= totalPages - 1 ? null : () => setState(() => _currentPage++)),
+                      IconButton(
+                          icon: const Icon(Icons.last_page, color: Colors.white),
+                          onPressed: _currentPage >= totalPages - 1 ? null : () => setState(() => _currentPage = totalPages - 1)),
+                      const SizedBox(width: 20),
+                      DropdownButton<int>(
+                        value: _rowsPerPage,
+                        dropdownColor: Colors.black,
+                        style: const TextStyle(color: Colors.white),
+                        items: _rowsPerPageOptions.map((int value) {
+                          return DropdownMenuItem<int>(value: value, child: Text('$value rows', style: const TextStyle(color: Colors.white)));
+                        }).toList(),
+                        onChanged: (int? newValue) {
+                          setState(() {
+                            _rowsPerPage = newValue!;
+                            _currentPage = 0;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           );
         },
       ),

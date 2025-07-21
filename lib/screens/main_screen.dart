@@ -1,9 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:healthtracker/models/health_record.dart';
-
-import 'statistics_screen.dart';
-import 'home_screen.dart';
-import 'all_records_screen.dart';
+import 'package:healthtracker/screens/dashboard/overall_statistics_screen.dart';
+import 'package:healthtracker/screens/dashboard/blood_pressure_screen.dart';
+import 'package:healthtracker/screens/dashboard/sugar_measurement_screen.dart';
+import 'package:healthtracker/screens/dashboard/pulse_rate_screen.dart';
+import 'package:healthtracker/screens/dashboard/calories_in_screen.dart';
+import 'package:healthtracker/screens/dashboard/calories_out_screen.dart';
+import 'package:healthtracker/screens/dashboard/wellness_value_screen.dart';
+import 'package:healthtracker/screens/reports/all_records_screen.dart';
+import 'package:healthtracker/screens/reports/blood_pressure_report_screen.dart';
+import 'package:healthtracker/screens/reports/sugar_measurement_report_screen.dart';
+import 'package:healthtracker/screens/reports/pulse_rate_report_screen.dart';
+import 'package:healthtracker/screens/reports/calories_in_report_screen.dart';
+import 'package:healthtracker/screens/reports/calories_out_report_screen.dart';
+import 'package:healthtracker/screens/reports/wellness_report_screen.dart';
+import 'package:healthtracker/screens/data/calories_in_data_screen.dart';
+import 'package:healthtracker/screens/data/calories_out_data_screen.dart';
+import 'package:healthtracker/screens/data/blood_pressure_data_screen.dart';
+import 'package:healthtracker/screens/data/sugar_data_screen.dart';
+import 'package:healthtracker/screens/data/pulse_data_screen.dart';
+import 'package:healthtracker/screens/data/calories_value_data_screen.dart';
+import 'package:healthtracker/screens/data/wellness_data_screen.dart';
+import 'package:healthtracker/screens/user_profile_screen.dart';
+import 'package:healthtracker/widgets/side_menu.dart';
 
 class MainScreen extends StatefulWidget {
   final List<HealthRecord> records;
@@ -15,66 +34,122 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  bool _isMenuExpanded = true;
 
-  late List<Widget> _widgetOptions;
-  late List<HealthRecord> _records;
-
-  @override
-  void initState() {
-    super.initState();
-    _records = widget.records;
-    _widgetOptions = <Widget>[
-      StatisticsScreen(records: _records),
-      AllRecordsScreen(records: _records),
-      HomeScreen(onRecordAdded: (newRecord) {
-        setState(() {
-          _records.add(newRecord);
-        });
-      }),
-    ];
+  Widget _getSelectedScreen() {
+    switch (_selectedIndex) {
+      case 0:
+        return OverallStatisticsScreen(records: widget.records);
+      case 1:
+        return const BloodPressureScreen();
+      case 2:
+        return const SugarMeasurementScreen();
+      case 3:
+        return const PulseRateScreen();
+      case 4:
+        return const CaloriesInScreen();
+      case 5:
+        return const CaloriesOutScreen();
+      case 6:
+        return const WellnessValueScreen();
+      case 10:
+        return AllRecordsScreen(records: widget.records);
+      case 11:
+        return const BloodPressureReportScreen();
+      case 12:
+        return const SugarMeasurementReportScreen();
+      case 13:
+        return const PulseRateReportScreen();
+      case 14:
+        return const CaloriesInReportScreen();
+      case 15:
+        return const CaloriesOutReportScreen();
+      case 16:
+        return const WellnessReportScreen();
+      case 20:
+        return const UserProfileScreen();
+      case 21:
+        return const CaloriesInDataScreen();
+      case 22:
+        return const CaloriesOutDataScreen();
+      case 23:
+        return const BloodPressureDataScreen();
+      case 24:
+        return const SugarDataScreen();
+      case 25:
+        return const PulseDataScreen();
+      case 26:
+        return const CaloriesValueDataScreen();
+      case 27:
+        return const WellnessDataScreen();
+      default:
+        return OverallStatisticsScreen(records: widget.records);
+    }
   }
 
-  void _onItemTapped(int index) {
+  void _onMenuItemClicked(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  void _toggleMenu() {
+    setState(() {
+      _isMenuExpanded = !_isMenuExpanded;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // Extend body behind navigation bar
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.teal[900]!, Colors.grey[850]!],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: _toggleMenu,
+        ),
+        title: const Text('Health Tracker'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {},
+          ),
+          PopupMenuButton(
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'edit_profile',
+                child: Text('Edit Profile'),
+              ),
+              const PopupMenuItem(
+                value: 'change_password',
+                child: Text('Change Password'),
+              ),
+              const PopupMenuItem(
+                value: 'logout',
+                child: Text('Logout'),
+              ),
+            ],
+            onSelected: (value) {
+              // Handle menu selection
+            },
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CircleAvatar(
+                child: Icon(Icons.person),
               ),
             ),
           ),
-          _widgetOptions.elementAt(_selectedIndex),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart_rounded),
-            label: 'Dashboard',
+      body: Row(
+        children: [
+          SideMenu(
+            isExpanded: _isMenuExpanded,
+            onMenuItemClicked: _onMenuItemClicked,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt_rounded),
-            label: 'All Records',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline_rounded),
-            label: 'Add Record',
+          Expanded(
+            child: _getSelectedScreen(),
           ),
         ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
       ),
     );
   }
