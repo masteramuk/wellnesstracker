@@ -140,16 +140,21 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
-      body: Row(
-        children: [
-          SideMenu(
-            isExpanded: _isMenuExpanded,
-            onMenuItemClicked: _onMenuItemClicked,
-          ),
-          Expanded(
-            child: _getSelectedScreen(),
-          ),
-        ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isPhone = constraints.maxWidth < 600;
+          return Row(
+            children: [
+              SideMenu(
+                isExpanded: !isPhone,
+                onMenuItemClicked: _onMenuItemClicked,
+              ),
+              Expanded(
+                child: _getSelectedScreen(),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
