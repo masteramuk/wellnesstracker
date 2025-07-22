@@ -252,12 +252,7 @@ class _SideMenuState extends State<SideMenu> {
           index: 24,
           isSubMenu: true,
         ),
-        _buildMenuItem(
-          icon: Icons.monitor_heart,
-          title: 'Pulse Data',
-          index: 25,
-          isSubMenu: true,
-        ),
+        
         _buildMenuItem(
           icon: Icons.calculate,
           title: 'Calories Value Data',
