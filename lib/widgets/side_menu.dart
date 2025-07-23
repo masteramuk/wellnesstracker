@@ -26,46 +26,49 @@ class _SideMenuState extends State<SideMenu> {
       duration: const Duration(milliseconds: 300),
       width: widget.isExpanded ? 250 : 80,
       child: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.teal,
+        child: Container(
+          color: Colors.white,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                decoration: const BoxDecoration(
+                  color: Colors.teal,
+                ),
+                child: widget.isExpanded
+                    ? const Text(
+                        'Health Tracker',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                        ),
+                      )
+                    : const Center(
+                        child: Icon(
+                          Icons.health_and_safety,
+                          color: Colors.white,
+                          size: 40,
+                        ),
+                      ),
               ),
-              child: widget.isExpanded
-                  ? const Text(
-                      'Health Tracker',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                      ),
-                    )
-                  : const Center(
-                      child: Icon(
-                        Icons.health_and_safety,
-                        color: Colors.white,
-                        size: 40,
-                      ),
-                    ),
-            ),
-            _buildDashboardMenu(),
-            _buildReportsMenu(),
-            _buildDataMenu(),
-            _buildMenuItem(
-              icon: Icons.person,
-              title: 'User Profile',
-              index: 20,
-            ),
-            const Divider(),
-            _buildMenuItem(
-              icon: Icons.logout,
-              title: 'Logout',
-              onTap: () {
-                // Handle logout
-              },
-            ),
-          ],
+              _buildDashboardMenu(),
+              _buildReportsMenu(),
+              _buildDataMenu(),
+              _buildMenuItem(
+                icon: Icons.person,
+                title: 'User Profile',
+                index: 20,
+              ),
+              const Divider(),
+              _buildMenuItem(
+                icon: Icons.logout,
+                title: 'Logout',
+                onTap: () {
+                  // Handle logout
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -80,9 +83,9 @@ class _SideMenuState extends State<SideMenu> {
   }) {
     final bool isSelected = _selectedIndex == index;
     return ListTile(
-      leading: Icon(icon, color: isSelected ? Colors.teal : null),
+      leading: Icon(icon, color: isSelected ? Colors.teal : Colors.black54),
       title: widget.isExpanded
-          ? Text(title, style: TextStyle(color: isSelected ? Colors.teal : null))
+          ? Text(title, style: TextStyle(color: isSelected ? Colors.teal : Colors.black87))
           : null,
       onTap: () {
         if (onTap != null) {
@@ -103,8 +106,8 @@ class _SideMenuState extends State<SideMenu> {
   Widget _buildDashboardMenu() {
     return ExpansionTile(
       controller: _dashboardController,
-      leading: const Icon(Icons.dashboard),
-      title: widget.isExpanded ? const Text('Dashboard') : const SizedBox.shrink(),
+      leading: const Icon(Icons.dashboard, color: Colors.black54),
+      title: widget.isExpanded ? const Text('Dashboard', style: TextStyle(color: Colors.black87)) : const SizedBox.shrink(),
       onExpansionChanged: (isExpanded) {
         if (isExpanded) {
           _reportsController.collapse();
@@ -161,8 +164,8 @@ class _SideMenuState extends State<SideMenu> {
   Widget _buildReportsMenu() {
     return ExpansionTile(
       controller: _reportsController,
-      leading: const Icon(Icons.bar_chart),
-      title: widget.isExpanded ? const Text('Reports') : const SizedBox.shrink(),
+      leading: const Icon(Icons.bar_chart, color: Colors.black54),
+      title: widget.isExpanded ? const Text('Reports', style: TextStyle(color: Colors.black87)) : const SizedBox.shrink(),
       onExpansionChanged: (isExpanded) {
         if (isExpanded) {
           _dashboardController.collapse();
@@ -219,8 +222,8 @@ class _SideMenuState extends State<SideMenu> {
   Widget _buildDataMenu() {
     return ExpansionTile(
       controller: _dataController,
-      leading: const Icon(Icons.data_usage),
-      title: widget.isExpanded ? const Text('Data') : const SizedBox.shrink(),
+      leading: const Icon(Icons.data_usage, color: Colors.black54),
+      title: widget.isExpanded ? const Text('Data', style: TextStyle(color: Colors.black87)) : const SizedBox.shrink(),
       onExpansionChanged: (isExpanded) {
         if (isExpanded) {
           _dashboardController.collapse();
